@@ -2,6 +2,8 @@
 (function () {
 	'use strict';
 
+	// New COmment
+
 	/**
 	 * Sets up a brand new Todo list.
 	 *
