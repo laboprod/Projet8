@@ -3,7 +3,7 @@
 	'use strict';
 
 	/**
-	 * Sets up a brand new Todo list.
+	 * Set up a brand new Todo list.
 	 *
 	 * @param {string} name The name of your new to do list.
 	 */
