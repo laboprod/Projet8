@@ -2,26 +2,24 @@
 (function (window) {
 	'use strict';
 
-	var htmlEscapes = {
+	let htmlEscapes = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;',
 		'"': '&quot;',
-		'\'': '&#x27;',
-		'`': '&#x60;'
+		"'": '&#x27;',
+		'`': '&#x60;',
 	};
 
-	var escapeHtmlChar = function (chr) {
+	let escapeHtmlChar = function (chr) {
 		return htmlEscapes[chr];
 	};
 
-	var reUnescapedHtml = /[&<>"'`]/g;
-	var reHasUnescapedHtml = new RegExp(reUnescapedHtml.source);
+	let reUnescapedHtml = /[&<>"'`]/g;
+	let reHasUnescapedHtml = new RegExp(reUnescapedHtml.source);
 
-	var escape = function (string) {
-		return (string && reHasUnescapedHtml.test(string))
-			? string.replace(reUnescapedHtml, escapeHtmlChar)
-			: string;
+	let escape = function (string) {
+		return string && reHasUnescapedHtml.test(string) ? string.replace(reUnescapedHtml, escapeHtmlChar) : string;
 	};
 
 	/**
@@ -30,14 +28,14 @@
 	 * @constructor
 	 */
 	function Template() {
-		this.defaultTemplate
-		=	'<li data-id="{{id}}" class="{{completed}}">'
-		+		'<div class="view">'
-		+			'<input class="toggle" type="checkbox" {{checked}}>'
-		+			'<label>{{title}}</label>'
-		+			'<button class="destroy"></button>'
-		+		'</div>'
-		+	'</li>';
+		this.defaultTemplate =
+			'<li data-id="{{id}}" class="{{completed}}">' +
+			'<div class="view">' +
+			'<input class="toggle" type="checkbox" {{checked}}>' +
+			'<label>{{title}}</label>' +
+			'<button class="destroy"></button>' +
+			'</div>' +
+			'</li>';
 	}
 
 	/**
@@ -58,13 +56,13 @@
 	 * });
 	 */
 	Template.prototype.show = function (data) {
-		var i, l;
-		var view = '';
+		let i, l;
+		let view = '';
 
 		for (i = 0, l = data.length; i < l; i++) {
-			var template = this.defaultTemplate;
-			var completed = '';
-			var checked = '';
+			let template = this.defaultTemplate;
+			let completed = '';
+			let checked = '';
 
 			if (data[i].completed) {
 				completed = 'completed';
