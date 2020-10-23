@@ -86,12 +86,14 @@
 			callback = callback || function () {};
 
 			// Generate an ID
-			let newId = '';
-			let charset = '0123456789';
+			// let newId = '';
+			// let charset = '0123456789';
+			let newId = Date.now();
+			console.log(newId);
 
-			for (let i = 0; i < 6; i++) {
-				newId += charset.charAt(Math.floor(Math.random() * charset.length));
-			}
+			// for (let i = 0; i < 6; i++) {
+			// 	newId += charset.charAt(Math.floor(Math.random() * charset.length));
+			// }
 
 			// If an ID was actually given, find the item and update each property
 			if (id) {
