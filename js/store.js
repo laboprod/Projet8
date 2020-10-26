@@ -88,8 +88,8 @@
 			// Generate an ID
 			// let newId = '';
 			// let charset = '0123456789';
-			let newId = Date.now();
-			console.log(newId);
+			// let newId = Date.now();
+			// console.log(newId);
 
 			// for (let i = 0; i < 6; i++) {
 			// 	newId += charset.charAt(Math.floor(Math.random() * charset.length));
@@ -110,7 +110,9 @@
 				callback.call(this, todos);
 			} else {
 				// Assign an ID
-				updateData.id = parseInt(newId);
+				updateData.id = Date.now();
+
+				console.log(updateData);
 
 				todos.push(updateData);
 				localStorage[this._dbName] = JSON.stringify(data);
@@ -127,19 +129,25 @@
 		remove(id, callback) {
 			let data = JSON.parse(localStorage[this._dbName]);
 			let todos = data.todos;
-			let todoId;
+			// let todoId;
 
 			for (let i = 0; i < todos.length; i++) {
-				if (todos[i].id == id) {
-					todoId = todos[i].id;
-				}
-			}
-
-			for (let i = 0; i < todos.length; i++) {
-				if (todos[i].id == todoId) {
+				if (todos[i].id === id) {
 					todos.splice(i, 1);
 				}
 			}
+
+			// for (let i = 0; i < todos.length; i++) {
+			// 	if (todos[i].id == id) {
+			// 		todoId = todos[i].id;
+			// 	}
+			// }
+
+			// for (let i = 0; i < todos.length; i++) {
+			// 	if (todos[i].id == todoId) {
+			// 		todos.splice(i, 1);
+			// 	}
+			// }
 
 			localStorage[this._dbName] = JSON.stringify(data);
 			callback.call(this, todos);
