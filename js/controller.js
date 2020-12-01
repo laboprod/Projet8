@@ -14,6 +14,7 @@
 
 			self.model = model;
 			self.view = view;
+
 			self.view.bind('newTodo', (title) => {
 				self.addItem(title);
 			});
@@ -64,7 +65,7 @@
 		 */
 		showAll() {
 			let self = this;
-			self.model.read(function (data) {
+			self.model.read((data) => {
 				self.view.render('showEntries', data);
 			});
 		}
@@ -82,12 +83,12 @@
 		/**
 		 * Renders all completed tasks
 		 */
-		showCompleted = function () {
+		showCompleted() {
 			let self = this;
 			self.model.read({ completed: true }, (data) => {
 				self.view.render('showEntries', data);
 			});
-		};
+		}
 
 		/**
 		 * An event to fire whenever you want to add an item. Simply pass in the event
