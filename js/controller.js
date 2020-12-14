@@ -94,18 +94,32 @@
 		 * An event to fire whenever you want to add an item. Simply pass in the event
 		 * object and it'll handle the DOM insertion and saving of the new item.
 		 */
+		// Erreur : Faute de frappe --> adddItem
+		// Amélioration :
+
 		addItem(title) {
 			let self = this;
 
-			if (title.trim() === '') {
-				return;
+			if (title.trim() !== '') {
+				self.model.create(title, () => {
+					self.view.render('clearNewTodo');
+					self._filter(true);
+				});
 			}
-
-			self.model.create(title, () => {
-				self.view.render('clearNewTodo');
-				self._filter(true);
-			});
 		}
+
+		// addItem(title) {
+		// 	let self = this;
+
+		// 	if (title.trim() === '') {
+		// 		return;
+		// 	}
+
+		// 	self.model.create(title, () => {
+		// 		self.view.render('clearNewTodo');
+		// 		self._filter(true);
+		// 	});
+		// }
 
 		/*
 		 * Triggers the item editing mode.
@@ -120,18 +134,13 @@
 		/*
 		 * Finishes the item editing mode successfully.
 		 */
+		// Amélioration : supprimer les while et slice à l'aide de trim() qui supprime les blancs et espaces
+
 		editItemSave(id, title) {
 			let self = this;
 
-			while (title[0] === ' ') {
-				title = title.slice(1);
-			}
-
-			while (title[title.length - 1] === ' ') {
-				title = title.slice(0, -1);
-			}
-
 			if (title.length !== 0) {
+				title = title.trim();
 				self.model.update(id, { title: title }, () => {
 					self.view.render('editItemDone', { id: id, title: title });
 				});
@@ -139,6 +148,26 @@
 				self.removeItem(id);
 			}
 		}
+
+		// editItemSave(id, title) {
+		// 	let self = this;
+
+		// 	while (title[0] === ' ') {
+		// 		title = title.slice(1);
+		// 	}
+
+		// 	while (title[title.length - 1] === ' ') {
+		// 		title = title.slice(0, -1);
+		// 	}
+
+		// 	if (title.length !== 0) {
+		// 		self.model.update(id, { title: title }, () => {
+		// 			self.view.render('editItemDone', { id: id, title: title });
+		// 		});
+		// 	} else {
+		// 		self.removeItem(id);
+		// 	}
+		// }
 
 		/*
 		 * Cancels the item editing mode.
@@ -157,25 +186,41 @@
 		 * @param {number} id The ID of the item to remove from the DOM and
 		 * storage
 		 */
+		// Amélioration : on supprime la boucle forEach car on a déjà l'id dans remove().
+
 		removeItem(id) {
 			let self = this;
-			let items;
 			self.model.read((data) => {
 				items = data;
 			});
 
-			items.forEach((item) => {
-				if (item.id === id) {
-					console.log('Element with ID: ' + id + ' has been removed.');
-				}
-			});
-
 			self.model.remove(id, () => {
 				self.view.render('removeItem', id);
+				console.log('Element with ID: ' + id + ' has been removed.');
 			});
 
 			self._filter();
 		}
+
+		// removeItem(id) {
+		// 	let self = this;
+		// 	let items;
+		// 	self.model.read((data) => {
+		// 		items = data;
+		// 	});
+
+		// 	items.forEach((item) => {
+		// 		if (item.id === id) {
+		// 			console.log('Element with ID: ' + id + ' has been removed.');
+		// 		}
+		// 	});
+
+		// 	self.model.remove(id, () => {
+		// 		self.view.render('removeItem', id);
+		// 	});
+
+		// 	self._filter();
+		// }
 
 		/**
 		 * Will remove all completed items from the DOM and storage.

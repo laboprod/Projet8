@@ -41,25 +41,45 @@
 		 *	 // hello: world in their properties
 		 * });
 		 */
+		// Amélioration : on remplace le if(!callback) par if(callback) pur supprimer un return
+
 		find(query, callback) {
-			if (!callback) {
-				return;
-			}
+			if (callback) {
+				let todos = JSON.parse(localStorage[this._dbName]).todos;
 
-			let todos = JSON.parse(localStorage[this._dbName]).todos;
-
-			callback.call(
-				this,
-				todos.filter((todo) => {
-					for (let q in query) {
-						if (query[q] !== todo[q]) {
-							return false;
+				callback.call(
+					this,
+					todos.filter((todo) => {
+						for (let q in query) {
+							if (query[q] !== todo[q]) {
+								return false;
+							}
 						}
-					}
-					return true;
-				})
-			);
+						return true;
+					})
+				);
+			}
 		}
+
+		// find(query, callback) {
+		// 	if (!callback) {
+		// 		return;
+		// 	}
+
+		// 	let todos = JSON.parse(localStorage[this._dbName]).todos;
+
+		// 	callback.call(
+		// 		this,
+		// 		todos.filter((todo) => {
+		// 			for (let q in query) {
+		// 				if (query[q] !== todo[q]) {
+		// 					return false;
+		// 				}
+		// 			}
+		// 			return true;
+		// 		})
+		// 	);
+		// }
 
 		/**
 		 * Will retrieve all data from the collection
@@ -79,6 +99,8 @@
 		 * @param {function} callback The callback to fire after saving
 		 * @param {number} id An optional param to enter an ID of an item to update
 		 */
+		// Erreur : possible d'avoir 2 id identiques
+		// Amélioration : on assigne un id avec Date.now() qui sera forcément unique.
 		save(updateData, callback, id) {
 			let data = JSON.parse(localStorage[this._dbName]);
 			let todos = data.todos;
@@ -88,8 +110,6 @@
 			// Generate an ID
 			// let newId = '';
 			// let charset = '0123456789';
-			// let newId = Date.now();
-			// console.log(newId);
 
 			// for (let i = 0; i < 6; i++) {
 			// 	newId += charset.charAt(Math.floor(Math.random() * charset.length));
@@ -112,8 +132,6 @@
 				// Assign an ID
 				updateData.id = Date.now();
 
-				console.log(updateData);
-
 				todos.push(updateData);
 				localStorage[this._dbName] = JSON.stringify(data);
 				callback.call(this, [updateData]);
@@ -126,6 +144,7 @@
 		 * @param {number} id The ID of the item you want to remove
 		 * @param {function} callback The callback to fire after saving
 		 */
+		// Amélioration : on supprime la variable todoId pour regrouper les 2 boucles en 1 seule.
 		remove(id, callback) {
 			let data = JSON.parse(localStorage[this._dbName]);
 			let todos = data.todos;
