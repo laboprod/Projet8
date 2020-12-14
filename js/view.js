@@ -1,6 +1,6 @@
 /*global qs, qsa, $on, $parent, $delegate */
 
-(function (window) {
+((window) => {
 	'use strict';
 
 	/**

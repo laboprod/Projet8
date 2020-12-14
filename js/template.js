@@ -1,5 +1,5 @@
 /*jshint laxbreak:true */
-(function (window) {
+((window) => {
 	'use strict';
 
 	let htmlEscapes = {
@@ -11,14 +11,14 @@
 		'`': '&#x60;',
 	};
 
-	let escapeHtmlChar = function (chr) {
+	let escapeHtmlChar = (chr) => {
 		return htmlEscapes[chr];
 	};
 
 	let reUnescapedHtml = /[&<>"'`]/g;
 	let reHasUnescapedHtml = new RegExp(reUnescapedHtml.source);
 
-	let escape = function (string) {
+	let escape = (string) => {
 		return string && reHasUnescapedHtml.test(string) ? string.replace(reUnescapedHtml, escapeHtmlChar) : string;
 	};
 

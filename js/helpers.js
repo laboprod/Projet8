@@ -1,5 +1,5 @@
 /*global NodeList */
-(function (window) {
+((window) => {
 	'use strict';
 
 	// Get element(s) by CSS selector:

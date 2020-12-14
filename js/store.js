@@ -1,5 +1,5 @@
 /*jshint eqeqeq:false */
-(function (window) {
+((window) => {
 	'use strict';
 
 	/**
