@@ -59,9 +59,11 @@ describe('controller', function () {
 
 	it('should show entries on start-up', function () {
 		// TODO: write test
-		setUpModel([]);
-		subject.setView('');
-		expect(view.render).toHaveBeenCalledWith('showEntries', []);
+		let todos = {}; // On crée un objet todos vide
+		setUpModel([todos]); // On initialise le modèle avec l'objet
+		subject.setView(''); // On initialise la vue sans paramètre
+		// On s'attend à appeler la vue avec showEntries et l'objet todos
+		expect(view.render).toHaveBeenCalledWith('showEntries', [todos]);
 	});
 
 	describe('routing', function () {
@@ -85,15 +87,26 @@ describe('controller', function () {
 
 		it('should show active entries', function () {
 			// TODO: write test
-			let todo = { title: 'title', completed: false, id: 123456 };
-			setUpModel([todo]);
-			subject.setView('#/active');
+			let todo = { title: 'title', completed: false }; // On crée un objet avec la propriété completed: false
+			setUpModel([todo]); // On initialise le modèle avec l'objet
+			subject.setView('#/active'); // On initialise la vue en affichant les todos qui ont la route active
+
+			// On s'attend a trouver le todo qui a comme paramètre completed. false
 			expect(model.read).toHaveBeenCalledWith({ completed: false }, jasmine.any(Function));
+			// On s'attend à appeler la vue avec showEntries et l'objet todo
 			expect(view.render).toHaveBeenCalledWith('showEntries', [todo]);
 		});
 
 		it('should show completed entries', function () {
 			// TODO: write test
+			let todo = { title: 'title', completed: true }; // On crée un objet avec la propriété completed: true
+			setUpModel([todo]); // On initialise le modèle avec l'objet
+			subject.setView('#/completed'); // On initialise la vue en affichant les todos qui ont la route completed
+
+			// On s'attend a trouver le todo qui a comme paramètre completed: true
+			expect(model.read).toHaveBeenCalledWith({ completed: true }, jasmine.any(Function));
+			// On s'attend à appeler la vue avec showEntries et l'objet todo
+			expect(view.render).toHaveBeenCalledWith('showEntries', [todo]);
 		});
 	});
 
@@ -141,25 +154,97 @@ describe('controller', function () {
 
 	it('should highlight "All" filter by default', function () {
 		// TODO: write test
+		setUpModel([]); // On initialise le modele
+
+		subject.setView(''); // On initialise la vue par défaut
+
+		// On s'attend à ce que la vue soit filtrer avec le paramètre par défaut (ici rien)
+		expect(view.render).toHaveBeenCalledWith('setFilter', '');
 	});
 
 	it('should highlight "Active" filter when switching to active view', function () {
 		// TODO: write test
+		setUpModel([]); // On initialise le modele
+
+		subject.setView('#/active'); // On initialise la vue avec la route 'active'
+
+		// On s'attend à ce que la vue soit filtrer avec le paramètre active
+		expect(view.render).toHaveBeenCalledWith('setFilter', 'active');
+	});
+
+	// Test Rajouté
+	it('should highlight "Completed" filter when switching to completed view', function () {
+		// TODO: write test
+		setUpModel([]); // On initialise le modele
+
+		subject.setView('#/completed'); // On initialise la vue avec la route 'completed'
+
+		// On s'attend à ce que la vue soit filtrer avec le paramètre completed
+		expect(view.render).toHaveBeenCalledWith('setFilter', 'completed');
 	});
 
 	describe('toggle all', function () {
 		it('should toggle all todos to completed', function () {
 			// TODO: write test
+			// On crée un tableau d'objets avec des paramètres completed différents
+			var allTodos = [
+				{ id: 42, title: 'my todo 42', completed: true },
+				{ id: 43, title: 'my todo 43', completed: false },
+			];
+			setUpModel(allTodos); // On initialise le modéle avec ce tableau
+			subject.setView(''); // On initialise la vue sans paramètre particulier
+
+			// Au clic, on passe le paramètre completed: true à tout les todos
+			view.trigger('toggleAll', { completed: true });
+
+			// On s'attend à actualiser le modèle avec completed: true pour tout les todos
+			expect(model.update).toHaveBeenCalledWith(42, { completed: true }, jasmine.any(Function));
+			expect(model.update).toHaveBeenCalledWith(43, { completed: true }, jasmine.any(Function));
+		});
+
+		// Test Rajouté
+		it('should toggle all todos to active', function () {
+			// TODO: write test
+			// On crée un tableau d'objets avec des paramètres completed différents
+			let allTodos = [
+				{ id: 42, title: 'my todo 42', completed: true },
+				{ id: 43, title: 'my todo 43', completed: false },
+			];
+			setUpModel(allTodos); // On initialise le modéle avec ce tableau
+			subject.setView(''); // On initialise la vue sans paramètre particulier
+
+			// Au clic, on passe le paramètre completed: false à tout les todos
+			view.trigger('toggleAll', { completed: false });
+
+			// On s'attend à actualiser le modèle avec completed: false pour tout les todos
+			expect(model.update).toHaveBeenCalledWith(42, { completed: false }, jasmine.any(Function));
+			expect(model.update).toHaveBeenCalledWith(43, { completed: false }, jasmine.any(Function));
 		});
 
 		it('should update the view', function () {
 			// TODO: write test
+			// Reprise du update the view de la ligne 341
+			let todo = { id: 42, title: 'my todo', completed: true };
+			setUpModel([todo]);
+			subject.setView('');
+
+			// Au clic, on passe le paramètre completed: false
+			view.trigger('toggleAll', { id: 42, completed: false });
+
+			// On s'attend à actualiser la vue avec completed: false
+			expect(view.render).toHaveBeenCalledWith('elementComplete', { id: 42, completed: false });
 		});
 	});
 
 	describe('new todo', function () {
 		it('should add a new todo to the model', function () {
 			// TODO: write test
+			setUpModel([]);
+			subject.setView('');
+
+			// au clic on crée dans le modèle un nouveau todo avec comme title: 'a new todo'
+			view.trigger('newTodo', 'a new todo');
+			expect(model.create).toHaveBeenCalledWith('a new todo', jasmine.any(Function));
 		});
 
 		it('should add a new todo to the view', function () {
@@ -204,6 +289,14 @@ describe('controller', function () {
 	describe('element removal', function () {
 		it('should remove an entry from the model', function () {
 			// TODO: write test
+			let todo = { id: 42, title: 'my todo', completed: true };
+			setUpModel([todo]);
+
+			subject.setView('');
+
+			// Au clic on supprime cet objet avec l'id 42 du modèle
+			view.trigger('itemRemove', { id: 42 });
+			expect(model.remove).toHaveBeenCalledWith(42, jasmine.any(Function));
 		});
 
 		it('should remove an entry from the view', function () {

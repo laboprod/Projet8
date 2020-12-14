@@ -190,6 +190,7 @@
 
 		removeItem(id) {
 			let self = this;
+			let items;
 			self.model.read((data) => {
 				items = data;
 			});
