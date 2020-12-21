@@ -46,59 +46,51 @@
 			qs('.filters [href="#/' + currentPage + '"]').className = 'selected';
 		}
 
-		// Amélioration : on remplace if(!listItem) par if(listItem) pour supprimer un return.
 		_elementComplete(id, completed) {
 			let listItem = qs('[data-id="' + id + '"]');
 
-			// if (!listItem) {
-			// 	return;
-			// }
-
-			if (listItem) {
-				listItem.className = completed ? 'completed' : '';
-
-				// In case it was toggled from an event and not by clicking the checkbox
-				qs('input', listItem).checked = completed;
+			if (!listItem) {
+				return;
 			}
+
+			listItem.className = completed ? 'completed' : '';
+
+			// In case it was toggled from an event and not by clicking the checkbox
+			qs('input', listItem).checked = completed;
 		}
 
-		// Amélioration : on remplace if(!listItem) par if(listItem) pour supprimer un return.
 		_editItem(id, title) {
 			let listItem = qs('[data-id="' + id + '"]');
 
-			// if (!listItem) {
-			// 	return;
-			// }
-			if (listItem) {
-				listItem.className = listItem.className + ' editing';
-
-				let input = document.createElement('input');
-				input.className = 'edit';
-
-				listItem.appendChild(input);
-				input.focus();
-				input.value = title;
+			if (!listItem) {
+				return;
 			}
+
+			listItem.className = listItem.className + ' editing';
+
+			let input = document.createElement('input');
+			input.className = 'edit';
+
+			listItem.appendChild(input);
+			input.focus();
+			input.value = title;
 		}
 
-		// Amélioration : on remplace if(!listItem) par if(listItem) pour supprimer un return.
 		_editItemDone(id, title) {
 			let listItem = qs('[data-id="' + id + '"]');
 
-			// if (!listItem) {
-			// 	return;
-			// }
-
-			if (listItem) {
-				let input = qs('input.edit', listItem);
-				listItem.removeChild(input);
-
-				listItem.className = listItem.className.replace('editing', '');
-
-				qsa('label', listItem).forEach(function (label) {
-					label.textContent = title;
-				});
+			if (!listItem) {
+				return;
 			}
+
+			let input = qs('input.edit', listItem);
+			listItem.removeChild(input);
+
+			listItem.className = listItem.className.replace('editing', '');
+
+			qsa('label', listItem).forEach(function (label) {
+				label.textContent = title;
+			});
 		}
 
 		render(viewCmd, parameter) {
@@ -185,32 +177,32 @@
 
 			switch (event) {
 				case 'newTodo':
-					$on(self.$newTodo, 'change', function () {
+					$on(self.$newTodo, 'change', () => {
 						handler(self.$newTodo.value);
 					});
 					break;
 				case 'removeCompleted':
-					$on(self.$clearCompleted, 'click', function () {
+					$on(self.$clearCompleted, 'click', () => {
 						handler();
 					});
 					break;
 				case 'toggleAll':
-					$on(self.$toggleAll, 'click', function () {
+					$on(self.$toggleAll, 'click', () => {
 						handler({ completed: this.checked });
 					});
 					break;
 				case 'itemEdit':
-					$delegate(self.$todoList, 'li label', 'dblclick', function () {
+					$delegate(self.$todoList, 'li label', 'dblclick', () => {
 						handler({ id: self._itemId(this) });
 					});
 					break;
 				case 'itemRemove':
-					$delegate(self.$todoList, '.destroy', 'click', function () {
+					$delegate(self.$todoList, '.destroy', 'click', () => {
 						handler({ id: self._itemId(this) });
 					});
 					break;
 				case 'itemToggle':
-					$delegate(self.$todoList, '.toggle', 'click', function () {
+					$delegate(self.$todoList, '.toggle', 'click', () => {
 						handler({
 							id: self._itemId(this),
 							completed: this.checked,

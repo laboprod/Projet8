@@ -95,31 +95,18 @@
 		 * object and it'll handle the DOM insertion and saving of the new item.
 		 */
 		// Erreur : Faute de frappe --> adddItem
-		// Amélioration :
-
 		addItem(title) {
 			let self = this;
 
-			if (title.trim() !== '') {
-				self.model.create(title, () => {
-					self.view.render('clearNewTodo');
-					self._filter(true);
-				});
+			if (title.trim() === '') {
+				return;
 			}
+
+			self.model.create(title, () => {
+				self.view.render('clearNewTodo');
+				self._filter(true);
+			});
 		}
-
-		// addItem(title) {
-		// 	let self = this;
-
-		// 	if (title.trim() === '') {
-		// 		return;
-		// 	}
-
-		// 	self.model.create(title, () => {
-		// 		self.view.render('clearNewTodo');
-		// 		self._filter(true);
-		// 	});
-		// }
 
 		/*
 		 * Triggers the item editing mode.
@@ -139,14 +126,14 @@
 		editItemSave(id, title) {
 			let self = this;
 
-			if (title.length !== 0) {
-				title = title.trim();
-				self.model.update(id, { title: title }, () => {
-					self.view.render('editItemDone', { id: id, title: title });
-				});
-			} else {
+			if (title.length === 0) {
 				self.removeItem(id);
+				return;
 			}
+			title = title.trim();
+			self.model.update(id, { title: title }, () => {
+				self.view.render('editItemDone', { id, title });
+			});
 		}
 
 		// editItemSave(id, title) {

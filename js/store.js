@@ -41,45 +41,25 @@
 		 *	 // hello: world in their properties
 		 * });
 		 */
-		// Amélioration : on remplace le if(!callback) par if(callback) pur supprimer un return
-
 		find(query, callback) {
-			if (callback) {
-				let todos = JSON.parse(localStorage[this._dbName]).todos;
-
-				callback.call(
-					this,
-					todos.filter((todo) => {
-						for (let q in query) {
-							if (query[q] !== todo[q]) {
-								return false;
-							}
-						}
-						return true;
-					})
-				);
+			if (!callback) {
+				return;
 			}
+
+			let todos = JSON.parse(localStorage[this._dbName]).todos;
+
+			callback.call(
+				this,
+				todos.filter((todo) => {
+					for (let q in query) {
+						if (query[q] !== todo[q]) {
+							return false;
+						}
+					}
+					return true;
+				})
+			);
 		}
-
-		// find(query, callback) {
-		// 	if (!callback) {
-		// 		return;
-		// 	}
-
-		// 	let todos = JSON.parse(localStorage[this._dbName]).todos;
-
-		// 	callback.call(
-		// 		this,
-		// 		todos.filter((todo) => {
-		// 			for (let q in query) {
-		// 				if (query[q] !== todo[q]) {
-		// 					return false;
-		// 				}
-		// 			}
-		// 			return true;
-		// 		})
-		// 	);
-		// }
 
 		/**
 		 * Will retrieve all data from the collection
