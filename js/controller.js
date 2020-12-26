@@ -132,7 +132,7 @@
 			}
 			title = title.trim();
 			self.model.update(id, { title: title }, () => {
-				self.view.render('editItemDone', { id, title });
+				self.view.render('editItemDone', { id: id, title: title });
 			});
 		}
 
