@@ -24,7 +24,7 @@
 			this.$clearCompleted = qs('.clear-completed');
 			this.$main = qs('.main');
 			this.$footer = qs('.footer');
-			this.$toggleAll = qs('.toggle-all');
+			this.$toggleAll = qs('#toggle-all');
 			this.$newTodo = qs('.new-todo');
 		}
 
