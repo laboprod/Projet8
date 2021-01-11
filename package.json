@@ -4,7 +4,12 @@
 		"todomvc-app-css": "^2.0.1",
 		"todomvc-common": "^1.0.1"
 	},
+	"scripts": {
+		"doc": "jsdoc -c jsdoc.json"
+	},
 	"devDependencies": {
-		"jasmine-core": "^2.0.0"
+		"better-docs": "^2.3.2",
+		"jasmine-core": "^2.0.0",
+		"jsdoc": "^3.6.6"
 	}
 }

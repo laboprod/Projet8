@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> template.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="Model.html">Model</a></li><li><a href="Store.html">Store</a></li><li><a href="Template.html">Template</a></li><li><a href="Todo.html">Todo</a></li><li><a href="View.html">View</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$delegate">$delegate</a></li><li><a href="global.html#$on">$on</a></li><li><a href="global.html#$parent">$parent</a></li><li><a href="global.html#qs">qs</a></li><li><a href="global.html#qsa">qsa</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>template.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*jshint laxbreak:true */
+((window) => {
+	'use strict';
+
+	let htmlEscapes = {
+		'&amp;': '&amp;amp;',
+		'&lt;': '&amp;lt;',
+		'>': '&amp;gt;',
+		'"': '&amp;quot;',
+		"'": '&amp;#x27;',
+		'`': '&amp;#x60;',
+	};
+
+	let escapeHtmlChar = (chr) => {
+		return htmlEscapes[chr];
+	};
+
+	let reUnescapedHtml = /[&amp;&lt;>"'`]/g;
+	let reHasUnescapedHtml = new RegExp(reUnescapedHtml.source);
+
+	let escape = (string) => {
+		return string &amp;&amp; reHasUnescapedHtml.test(string) ? string.replace(reUnescapedHtml, escapeHtmlChar) : string;
+	};
+
+	/**
+	 * Sets up defaults for all the Template methods such as a default template
+	 *
+	 * @constructor
+	 */
+
+	class Template {
+		constructor() {
+			this.defaultTemplate =
+				'&lt;li data-id="{{id}}" class="{{completed}}">' +
+				'&lt;div class="view">' +
+				'&lt;input class="toggle" type="checkbox" {{checked}}>' +
+				'&lt;label>{{title}}&lt;/label>' +
+				'&lt;button class="destroy">&lt;/button>' +
+				'&lt;/div>' +
+				'&lt;/li>';
+		}
+
+		/**
+		 * Creates an &lt;li> HTML string and returns it for placement in your app.
+		 *
+		 * NOTE: In real life you should be using a templating engine such as Mustache
+		 * or Handlebars, however, this is a vanilla JS example.
+		 *
+		 * @param {object} data The object containing keys you want to find in the
+		 *                      template to replace.
+		 * @returns {string} HTML String of an &lt;li> element
+		 *
+		 * @example
+		 * view.show({
+		 *	id: 1,
+		 *	title: "Hello World",
+		 *	completed: 0,
+		 * });
+		 */
+		show(data) {
+			let i, l;
+			let view = '';
+
+			for (i = 0, l = data.length; i &lt; l; i++) {
+				let template = this.defaultTemplate;
+				let completed = '';
+				let checked = '';
+
+				if (data[i].completed) {
+					completed = 'completed';
+					checked = 'checked';
+				}
+
+				template = template.replace('{{id}}', data[i].id);
+				template = template.replace('{{title}}', escape(data[i].title));
+				template = template.replace('{{completed}}', completed);
+				template = template.replace('{{checked}}', checked);
+
+				view = view + template;
+			}
+
+			return view;
+		}
+
+		/**
+		 * Displays a counter of how many to dos are left to complete
+		 *
+		 * @param {number} activeTodos The number of active todos.
+		 * @returns {string} String containing the count
+		 */
+		itemCounter(activeTodos) {
+			let plural = activeTodos === 1 ? '' : 's';
+
+			return '&lt;strong>' + activeTodos + '&lt;/strong> item' + plural + ' left';
+		}
+
+		/**
+		 * Updates the text within the "Clear completed" button
+		 *
+		 * @param  {number} completedTodos The number of completed todos.
+		 * @returns {string} String containing the count
+		 */
+		clearCompletedButton(completedTodos) {
+			if (completedTodos > 0) {
+				return 'Clear completed';
+			} else {
+				return '';
+			}
+		}
+	}
+
+	// Export to window
+	window.app = window.app || {};
+	window.app.Template = Template;
+})(window);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> store.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="Model.html">Model</a></li><li><a href="Store.html">Store</a></li><li><a href="Template.html">Template</a></li><li><a href="Todo.html">Todo</a></li><li><a href="View.html">View</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$delegate">$delegate</a></li><li><a href="global.html#$on">$on</a></li><li><a href="global.html#$parent">$parent</a></li><li><a href="global.html#qs">qs</a></li><li><a href="global.html#qsa">qsa</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>store.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*jshint eqeqeq:false */
+((window) => {
+	'use strict';
+
+	/**
+	 * Creates a new client side storage object and will create an empty
+	 * collection if no collection already exists.
+	 *
+	 * @param {string} name The name of our DB we want to use
+	 * @param {function} callback Our fake DB uses callbacks because in
+	 * real life you probably would be making AJAX calls
+	 */
+
+	class Store {
+		constructor(name, callback) {
+			callback = callback || function () {};
+
+			this._dbName = name;
+
+			if (!localStorage[name]) {
+				let data = {
+					todos: [],
+				};
+
+				localStorage[name] = JSON.stringify(data);
+			}
+
+			callback.call(this, JSON.parse(localStorage[name]));
+		}
+
+		/**
+		 * Finds items based on a query given as a JS object
+		 *
+		 * @param {object} query The query to match against (i.e. {foo: 'bar'})
+		 * @param {function} callback	 The callback to fire when the query has
+		 * completed running
+		 *
+		 * @example
+		 * db.find({foo: 'bar', hello: 'world'}, function (data) {
+		 *	 // data will return any items that have foo: bar and
+		 *	 // hello: world in their properties
+		 * });
+		 */
+		find(query, callback) {
+			if (!callback) {
+				return;
+			}
+
+			let todos = JSON.parse(localStorage[this._dbName]).todos;
+
+			callback.call(
+				this,
+				todos.filter((todo) => {
+					for (let q in query) {
+						if (query[q] !== todo[q]) {
+							return false;
+						}
+					}
+					return true;
+				})
+			);
+		}
+
+		/**
+		 * Will retrieve all data from the collection
+		 *
+		 * @param {function} callback The callback to fire upon retrieving data
+		 */
+		findAll(callback) {
+			callback = callback || function () {};
+			callback.call(this, JSON.parse(localStorage[this._dbName]).todos);
+		}
+
+		/**
+		 * Will save the given data to the DB. If no item exists it will create a new
+		 * item, otherwise it'll simply update an existing item's properties
+		 *
+		 * @param {object} updateData The data to save back into the DB
+		 * @param {function} callback The callback to fire after saving
+		 * @param {number} id An optional param to enter an ID of an item to update
+		 */
+		// Erreur : possible d'avoir 2 id identiques
+		// Amélioration : on assigne un id avec Date.now() qui sera forcément unique.
+		save(updateData, callback, id) {
+			let data = JSON.parse(localStorage[this._dbName]);
+			let todos = data.todos;
+
+			callback = callback || function () {};
+
+			// Generate an ID
+			// let newId = '';
+			// let charset = '0123456789';
+
+			// for (let i = 0; i &lt; 6; i++) {
+			// 	newId += charset.charAt(Math.floor(Math.random() * charset.length));
+			// }
+
+			// If an ID was actually given, find the item and update each property
+			if (id) {
+				for (let i = 0; i &lt; todos.length; i++) {
+					if (todos[i].id === id) {
+						for (let key in updateData) {
+							todos[i][key] = updateData[key];
+						}
+						break;
+					}
+				}
+
+				localStorage[this._dbName] = JSON.stringify(data);
+				callback.call(this, todos);
+			} else {
+				// Assign an ID
+				updateData.id = Date.now();
+
+				todos.push(updateData);
+				localStorage[this._dbName] = JSON.stringify(data);
+				callback.call(this, [updateData]);
+			}
+		}
+
+		/**
+		 * Will remove an item from the Store based on its ID
+		 *
+		 * @param {number} id The ID of the item you want to remove
+		 * @param {function} callback The callback to fire after saving
+		 */
+		// Amélioration : on supprime la variable todoId pour regrouper les 2 boucles en 1 seule.
+		remove(id, callback) {
+			let data = JSON.parse(localStorage[this._dbName]);
+			let todos = data.todos;
+			// let todoId;
+
+			for (let i = 0; i &lt; todos.length; i++) {
+				if (todos[i].id === id) {
+					todos.splice(i, 1);
+				}
+			}
+
+			// for (let i = 0; i &lt; todos.length; i++) {
+			// 	if (todos[i].id == id) {
+			// 		todoId = todos[i].id;
+			// 	}
+			// }
+
+			// for (let i = 0; i &lt; todos.length; i++) {
+			// 	if (todos[i].id == todoId) {
+			// 		todos.splice(i, 1);
+			// 	}
+			// }
+
+			localStorage[this._dbName] = JSON.stringify(data);
+			callback.call(this, todos);
+		}
+
+		/**
+		 * Will drop all storage and start fresh
+		 *
+		 * @param {function} callback The callback to fire after dropping the data
+		 */
+		drop(callback) {
+			let data = { todos: [] };
+			localStorage[this._dbName] = JSON.stringify(data);
+			callback.call(this, data.todos);
+		}
+	}
+
+	// Export to window
+	window.app = window.app || {};
+	window.app.Store = Store;
+})(window);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>

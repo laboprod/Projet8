@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> model.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="Model.html">Model</a></li><li><a href="Store.html">Store</a></li><li><a href="Template.html">Template</a></li><li><a href="Todo.html">Todo</a></li><li><a href="View.html">View</a></li></ul><h3>Global</h3><ul><li><a href="global.html#$delegate">$delegate</a></li><li><a href="global.html#$on">$on</a></li><li><a href="global.html#$parent">$parent</a></li><li><a href="global.html#qs">qs</a></li><li><a href="global.html#qsa">qsa</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>model.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>((window) => {
+	'use strict';
+
+	/**
+	 * Creates a new Model instance and hooks up the storage.
+	 *
+	 * @constructor
+	 * @param {object} storage A reference to the client side storage class
+	 */
+
+	class Model {
+		constructor(storage) {
+			this.storage = storage;
+		}
+
+		/**
+		 * Creates a new todo model
+		 *
+		 * @param {string} [title] The title of the task
+		 * @param {function} [callback] The callback to fire after the model is created
+		 */
+		create(title, callback) {
+			title = title || '';
+			callback = callback || function () {};
+
+			let newItem = {
+				title: title.trim(),
+				completed: false,
+			};
+
+			this.storage.save(newItem, callback);
+		}
+
+		/**
+		 * Finds and returns a model in storage. If no query is given it'll simply
+		 * return everything. If you pass in a string or number it'll look that up as
+		 * the ID of the model to find. Lastly, you can pass it an object to match
+		 * against.
+		 *
+		 * @param {string|number|object} [query] A query to match models against
+		 * @param {function} [callback] The callback to fire after the model is found
+		 *
+		 * @example
+		 * model.read(1, func); // Will find the model with an ID of 1
+		 * model.read('1'); // Same as above
+		 * //Below will find a model with foo equalling bar and hello equalling world.
+		 * model.read({ foo: 'bar', hello: 'world' });
+		 */
+		read(query, callback) {
+			let queryType = typeof query;
+			callback = callback || function () {};
+
+			if (queryType === 'function') {
+				callback = query;
+				return this.storage.findAll(callback);
+			} else if (queryType === 'string' || queryType === 'number') {
+				query = parseInt(query, 10);
+				this.storage.find({ id: query }, callback);
+			} else {
+				this.storage.find(query, callback);
+			}
+		}
+
+		/**
+		 * Updates a model by giving it an ID, data to update, and a callback to fire when
+		 * the update is complete.
+		 *
+		 * @param {number} id The id of the model to update
+		 * @param {object} data The properties to update and their new value
+		 * @param {function} callback The callback to fire when the update is complete.
+		 */
+		update(id, data, callback) {
+			this.storage.save(data, callback, id);
+		}
+
+		/**
+		 * Removes a model from storage
+		 *
+		 * @param {number} id The ID of the model to remove
+		 * @param {function} callback The callback to fire when the removal is complete.
+		 */
+		remove(id, callback) {
+			this.storage.remove(id, callback);
+		}
+
+		/**
+		 * WARNING: Will remove ALL data from storage.
+		 *
+		 * @param {function} callback The callback to fire when the storage is wiped.
+		 */
+		removeAll(callback) {
+			this.storage.drop(callback);
+		}
+
+		/**
+		 * Returns a count of all todos
+		 */
+		getCount(callback) {
+			let todos = {
+				active: 0,
+				completed: 0,
+				total: 0,
+			};
+
+			this.storage.findAll((data) => {
+				data.forEach((todo) => {
+					if (todo.completed) {
+						todos.completed++;
+					} else {
+						todos.active++;
+					}
+
+					todos.total++;
+				});
+				callback(todos);
+			});
+		}
+	}
+
+	// Export to window
+	window.app = window.app || {};
+	window.app.Model = Model;
+})(window);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>
