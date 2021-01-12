@@ -31,13 +31,13 @@
 	class Template {
 		constructor() {
 			this.defaultTemplate =
-				'<li data-id="{{id}}" class="{{completed}}">' +
-				'<div class="view">' +
-				'<input id="input-{{id}}" class="toggle" type="checkbox" {{checked}}>' +
-				'<label for="input-{{id}}">{{title}}</label>' +
-				'<button class="destroy"></button>' +
-				'</div>' +
-				'</li>';
+				`<li data-id="{{id}}" class="{{completed}}"> 
+				<div class="view"> 
+				<input id="input-{{id}}" class="toggle" type="checkbox" {{checked}}> 
+				<label for="input-{{id}}">{{title}}</label> 
+				<button class="destroy"></button> 
+				</div> 
+				</li>`;
 		}
 
 		/**

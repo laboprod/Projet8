@@ -10,41 +10,39 @@
 	 */
 	class Controller {
 		constructor(model, view) {
-			let self = this;
+			this.model = model;
+			this.view = view;
 
-			self.model = model;
-			self.view = view;
-
-			self.view.bind('newTodo', (title) => {
-				self.addItem(title);
+			this.view.bind('newTodo', (title) => {
+				this.addItem(title);
 			});
 
-			self.view.bind('itemEdit', (item) => {
-				self.editItem(item.id);
+			this.view.bind('itemEdit', (item) => {
+				this.editItem(item.id);
 			});
 
-			self.view.bind('itemEditDone', (item) => {
-				self.editItemSave(item.id, item.title);
+			this.view.bind('itemEditDone', (item) => {
+				this.editItemSave(item.id, item.title);
 			});
 
-			self.view.bind('itemEditCancel', (item) => {
-				self.editItemCancel(item.id);
+			this.view.bind('itemEditCancel', (item) => {
+				this.editItemCancel(item.id);
 			});
 
-			self.view.bind('itemRemove', (item) => {
-				self.removeItem(item.id);
+			this.view.bind('itemRemove', (item) => {
+				this.removeItem(item.id);
 			});
 
-			self.view.bind('itemToggle', (item) => {
-				self.toggleComplete(item.id, item.completed);
+			this.view.bind('itemToggle', (item) => {
+				this.toggleComplete(item.id, item.completed);
 			});
 
-			self.view.bind('removeCompleted', () => {
-				self.removeCompletedItems();
+			this.view.bind('removeCompleted', () => {
+				this.removeCompletedItems();
 			});
 
-			self.view.bind('toggleAll', (status) => {
-				self.toggleAll(status.completed);
+			this.view.bind('toggleAll', (status) => {
+				this.toggleAll(status.completed);
 			});
 		}
 
@@ -64,9 +62,8 @@
 		 * todo-list
 		 */
 		showAll() {
-			let self = this;
-			self.model.read((data) => {
-				self.view.render('showEntries', data);
+			this.model.read((data) => {
+				this.view.render('showEntries', data);
 			});
 		}
 
@@ -74,9 +71,8 @@
 		 * Renders all active tasks
 		 */
 		showActive() {
-			let self = this;
-			self.model.read({ completed: false }, (data) => {
-				self.view.render('showEntries', data);
+			this.model.read({ completed: false }, (data) => {
+				this.view.render('showEntries', data);
 			});
 		}
 
@@ -84,9 +80,8 @@
 		 * Renders all completed tasks
 		 */
 		showCompleted() {
-			let self = this;
-			self.model.read({ completed: true }, (data) => {
-				self.view.render('showEntries', data);
+			this.model.read({ completed: true }, (data) => {
+				this.view.render('showEntries', data);
 			});
 		}
 
@@ -98,15 +93,14 @@
 		 */
 		// Erreur : Faute de frappe --> adddItem
 		addItem(title) {
-			let self = this;
 
 			if (title.trim() === '') {
 				return;
 			}
 
-			self.model.create(title, () => {
-				self.view.render('clearNewTodo');
-				self._filter(true);
+			this.model.create(title, () => {
+				this.view.render('clearNewTodo');
+				this._filter(true);
 			});
 		}
 
@@ -117,9 +111,8 @@
 		 */
 
 		editItem(id) {
-			let self = this;
-			self.model.read(id, (data) => {
-				self.view.render('editItem', { id: id, title: data[0].title });
+			this.model.read(id, (data) => {
+				this.view.render('editItem', { id: id, title: data[0].title });
 			});
 		}
 
@@ -132,15 +125,14 @@
 		// Amélioration : supprimer les while et slice à l'aide de trim() qui supprime les blancs et espaces
 
 		editItemSave(id, title) {
-			let self = this;
 
 			if (title.length === 0) {
-				self.removeItem(id);
+				this.removeItem(id);
 				return;
 			}
 			title = title.trim();
-			self.model.update(id, { title: title }, () => {
-				self.view.render('editItemDone', { id: id, title: title });
+			this.model.update(id, { title: title }, () => {
+				this.view.render('editItemDone', { id: id, title: title });
 			});
 		}
 
@@ -170,9 +162,8 @@
 		 * @param {number} id The ID of the todo
 		 */
 		editItemCancel(id) {
-			let self = this;
-			self.model.read(id, (data) => {
-				self.view.render('editItemDone', { id: id, title: data[0].title });
+			this.model.read(id, (data) => {
+				this.view.render('editItemDone', { id: id, title: data[0].title });
 			});
 		}
 
@@ -186,18 +177,17 @@
 		// Amélioration : on supprime la boucle forEach car on a déjà l'id dans remove().
 
 		removeItem(id) {
-			let self = this;
 			let items;
-			self.model.read((data) => {
+			this.model.read((data) => {
 				items = data;
 			});
 
-			self.model.remove(id, () => {
-				self.view.render('removeItem', id);
+			this.model.remove(id, () => {
+				this.view.render('removeItem', id);
 				console.log('Element with ID: ' + id + ' has been removed.');
 			});
 
-			self._filter();
+			this._filter();
 		}
 
 		// removeItem(id) {
@@ -224,14 +214,13 @@
 		 * Will remove all completed items from the DOM and storage.
 		 */
 		removeCompletedItems() {
-			let self = this;
-			self.model.read({ completed: true }, (data) => {
+			this.model.read({ completed: true }, (data) => {
 				data.forEach((item) => {
-					self.removeItem(item.id);
+					this.removeItem(item.id);
 				});
 			});
 
-			self._filter();
+			this._filter();
 		}
 
 		/**
@@ -244,16 +233,15 @@
 		 * @param {boolean|undefined} silent Prevent re-filtering the todo items
 		 */
 		toggleComplete(id, completed, silent) {
-			let self = this;
-			self.model.update(id, { completed: completed }, () => {
-				self.view.render('elementComplete', {
+			this.model.update(id, { completed: completed }, () => {
+				this.view.render('elementComplete', {
 					id: id,
 					completed: completed,
 				});
 			});
 
 			if (!silent) {
-				self._filter();
+				this._filter();
 			}
 		}
 
@@ -262,14 +250,13 @@
 		 * Just pass in the event object.
 		 */
 		toggleAll(completed) {
-			let self = this;
-			self.model.read({ completed: !completed }, (data) => {
+			this.model.read({ completed: !completed }, (data) => {
 				data.forEach((item) => {
-					self.toggleComplete(item.id, completed, true);
+					this.toggleComplete(item.id, completed, true);
 				});
 			});
 
-			self._filter();
+			this._filter();
 		}
 
 		/**
@@ -277,16 +264,15 @@
 		 * number of todos.
 		 */
 		_updateCount() {
-			let self = this;
-			self.model.getCount((todos) => {
-				self.view.render('updateElementCount', todos.active);
-				self.view.render('clearCompletedButton', {
+			this.model.getCount((todos) => {
+				this.view.render('updateElementCount', todos.active);
+				this.view.render('clearCompletedButton', {
 					completed: todos.completed,
 					visible: todos.completed > 0,
 				});
 
-				self.view.render('toggleAll', { checked: todos.completed === todos.total });
-				self.view.render('contentBlockVisibility', { visible: todos.total > 0 });
+				this.view.render('toggleAll', { checked: todos.completed === todos.total });
+				this.view.render('contentBlockVisibility', { visible: todos.total > 0 });
 			});
 		}
 

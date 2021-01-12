@@ -133,40 +133,39 @@
 		 * @param {object} parameter The parameter of the function
 		 */
 		render(viewCmd, parameter) {
-			let self = this;
 			let viewCommands = {
-				showEntries: function () {
-					self.$todoList.innerHTML = self.template.show(parameter);
+				showEntries:  () => {
+					this.$todoList.innerHTML = this.template.show(parameter);
 				},
-				removeItem: function () {
-					self._removeItem(parameter);
+				removeItem:  () => {
+					this._removeItem(parameter);
 				},
-				updateElementCount: function () {
-					self.$todoItemCounter.innerHTML = self.template.itemCounter(parameter);
+				updateElementCount:  () => {
+					this.$todoItemCounter.innerHTML = this.template.itemCounter(parameter);
 				},
-				clearCompletedButton: function () {
-					self._clearCompletedButton(parameter.completed, parameter.visible);
+				clearCompletedButton:  () => {
+					this._clearCompletedButton(parameter.completed, parameter.visible);
 				},
-				contentBlockVisibility: function () {
-					self.$main.style.display = self.$footer.style.display = parameter.visible ? 'block' : 'none';
+				contentBlockVisibility:  () => {
+					this.$main.style.display = this.$footer.style.display = parameter.visible ? 'block' : 'none';
 				},
-				toggleAll: function () {
-					self.$toggleAll.checked = parameter.checked;
+				toggleAll:  () => {
+					this.$toggleAll.checked = parameter.checked;
 				},
-				setFilter: function () {
-					self._setFilter(parameter);
+				setFilter:  () => {
+					this._setFilter(parameter);
 				},
-				clearNewTodo: function () {
-					self.$newTodo.value = '';
+				clearNewTodo:  () => {
+					this.$newTodo.value = '';
 				},
-				elementComplete: function () {
-					self._elementComplete(parameter.id, parameter.completed);
+				elementComplete:  ()=> {
+					this._elementComplete(parameter.id, parameter.completed);
 				},
-				editItem: function () {
-					self._editItem(parameter.id, parameter.title);
+				editItem:  () => {
+					this._editItem(parameter.id, parameter.title);
 				},
-				editItemDone: function () {
-					self._editItemDone(parameter.id, parameter.title);
+				editItemDone:  () => {
+					this._editItemDone(parameter.id, parameter.title);
 				},
 			};
 
@@ -183,18 +182,17 @@
 		 * @param {function} handler Callback
 		 */
 		_bindItemEditDone(handler) {
-			let self = this;
-			$delegate(self.$todoList, 'li .edit', 'blur', function () {
+			$delegate(this.$todoList, 'li .edit', 'blur', () => {
 				if (!this.dataset.iscanceled) {
 					handler({
-						id: self._itemId(this),
+						id: this._itemId(this),
 						title: this.value,
 					});
 				}
 			});
 
-			$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
-				if (event.keyCode === self.ENTER_KEY) {
+			$delegate(this.$todoList, 'li .edit', 'keypress',  (event) => {
+				if (event.keyCode === this.ENTER_KEY) {
 					// Remove the cursor from the input when you hit enter just like if it
 					// were a real form
 					this.blur();
@@ -207,13 +205,12 @@
 		 * @param {function} handler Callback
 		 */
 		_bindItemEditCancel(handler) {
-			let self = this;
-			$delegate(self.$todoList, 'li .edit', 'keyup', function (event) {
-				if (event.keyCode === self.ESCAPE_KEY) {
+			$delegate(this.$todoList, 'li .edit', 'keyup', function (event) {
+				if (event.keyCode === this.ESCAPE_KEY) {
 					this.dataset.iscanceled = true;
 					this.blur();
 
-					handler({ id: self._itemId(this) });
+					handler({ id: this._itemId(this) });
 				}
 			});
 		}
