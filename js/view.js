@@ -182,17 +182,18 @@
 		 * @param {function} handler Callback
 		 */
 		_bindItemEditDone(handler) {
-			$delegate(this.$todoList, 'li .edit', 'blur', () => {
+			let self = this;
+			$delegate(self.$todoList, 'li .edit', 'blur', function () {
 				if (!this.dataset.iscanceled) {
 					handler({
-						id: this._itemId(this),
+						id: self._itemId(this),
 						title: this.value,
 					});
 				}
 			});
 
-			$delegate(this.$todoList, 'li .edit', 'keypress',  (event) => {
-				if (event.keyCode === this.ENTER_KEY) {
+			$delegate(self.$todoList, 'li .edit', 'keypress', function (event) {
+				if (event.keyCode === self.ENTER_KEY) {
 					// Remove the cursor from the input when you hit enter just like if it
 					// were a real form
 					this.blur();
